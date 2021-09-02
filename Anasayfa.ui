@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>900</height>
+    <width>1342</width>
+    <height>946</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -514,9 +514,9 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>-1</y>
-      <width>851</width>
+      <x>30</x>
+      <y>10</y>
+      <width>911</width>
       <height>421</height>
      </rect>
     </property>
@@ -526,6 +526,57 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Resim : </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lneResimYolu">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnResimYolu">
+           <property name="text">
+            <string>Tara</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
@@ -817,14 +868,23 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>0</x>
       <y>430</y>
-      <width>1091</width>
-      <height>391</height>
+      <width>1291</width>
+      <height>431</height>
      </rect>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>90</width>
+      <height>60</height>
+     </size>
+    </property>
+    <property name="showGrid">
+     <bool>true</bool>
     </property>
     <property name="gridStyle">
      <enum>Qt::SolidLine</enum>
@@ -842,7 +902,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <number>100</number>
     </property>
     <property name="columnCount">
-     <number>11</number>
+     <number>13</number>
     </property>
     <row/>
     <row/>
@@ -955,9 +1015,11 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <column/>
     <column/>
     <column/>
+    <column/>
+    <column/>
     <item row="0" column="0">
      <property name="text">
-      <string>ASDASLIHDASIOHDASOIHDASIPHDPASIDHJPASOJDSA</string>
+      <string/>
      </property>
     </item>
    </widget>
@@ -992,7 +1054,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>820</y>
+      <y>860</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -1004,8 +1066,8 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QLabel" name="lblUrunsayisi">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>830</y>
+      <x>170</x>
+      <y>870</y>
       <width>55</width>
       <height>16</height>
      </rect>
@@ -1017,7 +1079,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>900</x>
+      <x>990</x>
       <y>50</y>
       <width>221</width>
       <height>351</height>
@@ -1112,26 +1174,6 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnResimEkle">
-       <property name="text">
-        <string>Resim Ekle</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="verticalSpacer_6">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1156,8 +1198,8 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QPushButton" name="btnCikis">
     <property name="geometry">
      <rect>
-      <x>1088</x>
-      <y>-5</y>
+      <x>1200</x>
+      <y>10</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -1172,7 +1214,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1342</width>
      <height>25</height>
     </rect>
    </property>

@@ -5,6 +5,7 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from AnasayfaUI import *
+from PyQt5.QtGui import QPixmap, QIcon
 
 
 #-------------Ana Fonskiyonumuz------------#
@@ -37,8 +38,9 @@ sorguOlustur = ("""CREATE TABLE IF NOT EXISTS envanter(Id INTEGER NOT NULL PRIMA
  AliciIletisim TEXT NOT NULL,                   \
  StokSayisi TEXT NOT NULL,                      \
  SatisTarihi TEXT NOT NULL,                     \
- StokDurumu TEXT NOT NULL)
-
+ StokDurumu TEXT NOT NULL,
+ Fotograf BLOB NOT NULL,                
+ ResimYolu TEXT NOT NULL)
 """)
 
 curs.execute(sorguOlustur)
@@ -62,13 +64,16 @@ def Ekle():
     _spbStokSayisi = ui.spbStokSayisi.text()
     _cwdSatisTarihi = ui.cwidSatisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
     _lneGramKarat = ui.lneKarat.text()
+    _lneResimYolu = ui.lneResimYolu.text()
+    _lneResimYoluforShow = ui.lneResimYolu.text()
 
-    
+
+    image = BinaryCeviri(_lneResimYolu)
     
     curs.execute("""INSERT INTO envanter
-    (Maliyet, Iscilik, SatisFiyati, AliciIsmi, GramKarat, UrunId, AliciIletisim, StokSayisi, SatisTarihi, StokDurumu) 
-    VALUES (?, ?, ?, ? , ? , ?, ?, ?, ?, ?);""",
-            (_lneMaliyet, _lneIscilik, _lneSatisFiyati, _lneAliciAdi, _lneGramKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu))
+    (Maliyet, Iscilik, SatisFiyati, AliciIsmi, GramKarat, UrunId, AliciIletisim, StokSayisi, SatisTarihi, StokDurumu, Fotograf, ResimYolu) 
+    VALUES (?, ?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?);""",
+            (_lneMaliyet, _lneIscilik, _lneSatisFiyati, _lneAliciAdi, _lneGramKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu, image, _lneResimYoluforShow))
     conn.commit()
     Listele()
     ui.statusbar.showMessage("Kayıt ekleme işlemi başarıyla gerçekleşti", 10000)
@@ -96,7 +101,12 @@ def KayitGuncelle():
             _spbStokSayisi = ui.spbStokSayisi.text()
             _cwdSatisTarihi = ui.cwidSatisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
 
-            curs.execute("UPDATE envanter SET Maliyet=?, Iscilik=?, SatisFiyati=?, AliciIsmi=?, GramKarat=?, UrunId=?, AliciIletisim=?, StokSayisi=?, SatisTarihi=?, StokDurumu=? WHERE Id=?", (_lneMaliyet, _lneIscilik, _lneSatisFiyati, _lneAliciAdi,  _lneKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu, _Id))
+            _lneResimYolunew = ui.lneResimYolu.text()
+
+            #------------ResimGuncelleme-----------#
+            imagenew = BinaryCeviri(_lneResimYolunew)
+
+            curs.execute("UPDATE envanter SET Maliyet=?, Iscilik=?, SatisFiyati=?, AliciIsmi=?, GramKarat=?, UrunId=?, AliciIletisim=?, StokSayisi=?, SatisTarihi=?, StokDurumu=?,Fotograf=?, ResimYolu=? WHERE Id=?", (_lneMaliyet, _lneIscilik, _lneSatisFiyati, _lneAliciAdi,  _lneKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu, imagenew, _lneResimYolunew, _Id))
 
             conn.commit()
 
@@ -116,7 +126,7 @@ def Listele():
 
     ui.tableWidget.clear()
 
-    ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu'))
+    ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
     ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -124,8 +134,19 @@ def Listele():
 
     for satirIndeks, satirVeri in enumerate(curs):
         for sutunIndeks, sutunVeri in enumerate (satirVeri):
-            ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+            it = QTableWidgetItem()
+            if sutunIndeks == 11:
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
 
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+
+    ui.lneResimYolu.clear()
+    ui.lneMaliyet.clear()
     ui.lneAliciIletisim.clear()
     ui.lneKarat.clear()
     ui.lneIscilik.clear()
@@ -167,26 +188,102 @@ def KayıtSil():
 
 
 def KayıtAra():
+
+
     aliciAdSorgu = ui.lneAliciAdi.text()
     urunIdSorgu = ui.lneurunId.text()
     envanterDurumSorgu = ui.cmbStokdurumu.currentText()
     aliciIletisimSorgu = ui.lneAliciIletisim.text()
-    curs.execute("SELECT * FROM envanter WHERE AliciIsmi=? OR UrunId=?OR StokDurumu=? OR AliciIletisim=?", (aliciAdSorgu, urunIdSorgu, envanterDurumSorgu, aliciIletisimSorgu))
+    curs.execute("SELECT * FROM envanter WHERE AliciIletisim=? OR (StokDurumu=? AND AliciIsmi=?) OR StokDurumu=? OR (AliciIletisim=? AND StokDurumu=?)", (aliciIletisimSorgu, envanterDurumSorgu, aliciIletisimSorgu, envanterDurumSorgu,envanterDurumSorgu, aliciAdSorgu))
     conn.commit()
     ui.tableWidget.clear()
 
     for satirIndeks, satirVeri in enumerate(curs):
         for sutunIndeks, sutunVeri in enumerate (satirVeri):
-            ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu'))
+
+            it = QTableWidgetItem()
+            if sutunIndeks == 11:
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
+
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
 
 
-#-------------------Doldur-----------------#
-#------------------------------------------#
+            #ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+
+
+
+
+#------------------BinaryCeviri(SQlite Database için)-----------------#
+#---------------------------------------------------------------------#
+
+def BinaryCeviri(filename):
+    # Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
+
+#-------------------ResimYoluBul------------------#
+#-------------------------------------------------#
+
+def ResimYoluBul():
+    
+    fname = QFileDialog.getOpenFileName(caption='Open File',directory= 'C:/Users/MONSTERHAN/Desktop', filter="Images (*.png *.jpg *gif)")
+    ui.lneResimYolu.setText(fname[0])
+    
+
+#-------------------ResimEkle------------------#
+#----------------------------------------------#
+
+
+def ResimEkle():
+
+    conn = sqlite3.connect('veritabani.db')
+    curs = conn.cursor()
+
+
+    sorgu = """ INSERT INTO envanter
+                                  (Fotograf) VALUES (?)"""
+    
+    #secili = ui.tableWidget.selectedItems() # Secili item
+    resimyolu = ui.lneResimYolu.text()
+    
+    photo = BinaryCeviri(resimyolu)
+
+    curs.execute(sorgu, (photo,))
+
+    conn.commit()
+
+#-------------------ResimGoster------------------#
+#------------------------------------------------#
+
+def ResmiGoster():
+    
+    from PIL import Image
+
+
+    resimYolu = ui.lneResimYolu.text()
+
+    secili = ui.tableWidget.selectedItems()
+
+    item = secili[12].text()
+
+    print(item)
+
+    img = Image.open(item)
+
+    img.show()
+
+
+#-------------------Doldur (Yardımcı Fonksiyon)-----------------#
+#---------------------------------------------------------------#
 
 def Doldur():
-
-    
 
     secili = ui.tableWidget.selectedItems()
 
@@ -205,6 +302,7 @@ def Doldur():
         yil = int(secili[9].text()[0:4])
         ay = int(secili[9].text()[5:7])
         gun=int(secili[9].text()[8:10])
+        resimYolu = ui.lneResimYolu.setText(secili[12].text())
     
         ui.cwidSatisTarihi.setSelectedDate(QtCore.QDate(yil, ay, gun))
     
@@ -239,6 +337,9 @@ ui.btnAra.clicked.connect(KayıtAra)
 #ui.tableWidget.itemClicked.connect(Doldur)
 ui.tableWidget.itemSelectionChanged.connect(Doldur)
 ui.btnGuncelle.clicked.connect(KayitGuncelle)
+#ui.btnResimEkle.clicked.connect(ResimEkle)
+ui.btnResmiGoster.clicked.connect(ResmiGoster)
+ui.btnResimYolu.clicked.connect(ResimYoluBul)
 
 
 sys.exit(Uygulama.exec_())
