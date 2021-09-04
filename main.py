@@ -366,7 +366,7 @@ def ButunUrunler():
 
 
            
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
 #-------------------Satilan Urunleri Listele------------------#
 #-------------------------------------------------------------#
@@ -393,7 +393,7 @@ def SatilanUrunler():
 
 
            
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Maliyet', 'Iscilik', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
 #-------------------Çıkış------------------#
 #------------------------------------------#
