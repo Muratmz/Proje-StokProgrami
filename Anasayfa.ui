@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1342</width>
-    <height>946</height>
+    <width>1341</width>
+    <height>983</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Envanter Yönetim Programı</string>
   </property>
   <property name="styleSheet">
    <string notr="true">/*
@@ -516,14 +516,21 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <rect>
       <x>30</x>
       <y>10</y>
-      <width>911</width>
-      <height>421</height>
+      <width>1001</width>
+      <height>451</height>
      </rect>
     </property>
     <property name="title">
      <string>Ürün Bilgileri</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_9">
+     <item>
+      <widget class="QPushButton" name="btnTemizle">
+       <property name="text">
+        <string>Temizle</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -625,7 +632,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Maliyet</string>
+            <string>Taş Maliyet : </string>
            </property>
           </widget>
          </item>
@@ -643,7 +650,10 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="lneMaliyet">
+          <widget class="QLineEdit" name="lneTasMaliyet">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="placeholderText">
             <string/>
            </property>
@@ -652,11 +662,38 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Altın Maliyet :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lneAltinMaliyet"/>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>İşçilik</string>
+            <string>Toplam Maliyet :</string>
            </property>
           </widget>
          </item>
@@ -674,7 +711,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="lneIscilik"/>
+          <widget class="QLineEdit" name="lneToplamMaliyet"/>
          </item>
         </layout>
        </item>
@@ -866,10 +903,13 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     </layout>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>430</y>
+      <x>20</x>
+      <y>460</y>
       <width>1291</width>
       <height>431</height>
      </rect>
@@ -902,7 +942,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <number>100</number>
     </property>
     <property name="columnCount">
-     <number>13</number>
+     <number>14</number>
     </property>
     <row/>
     <row/>
@@ -1004,6 +1044,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <row/>
     <row/>
     <row/>
+    <column/>
     <column/>
     <column/>
     <column/>
@@ -1053,8 +1094,8 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>860</y>
+      <x>20</x>
+      <y>890</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -1066,8 +1107,8 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QLabel" name="lblUrunsayisi">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>870</y>
+      <x>180</x>
+      <y>900</y>
       <width>55</width>
       <height>16</height>
      </rect>
@@ -1079,8 +1120,8 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>50</y>
+      <x>1070</x>
+      <y>80</y>
       <width>221</width>
       <height>351</height>
      </rect>
@@ -1169,7 +1210,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <item>
       <widget class="QPushButton" name="btnListele">
        <property name="text">
-        <string>Kayıt Listele</string>
+        <string>Tüm Envanteri Listele</string>
        </property>
       </widget>
      </item>
@@ -1198,7 +1239,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
    <widget class="QPushButton" name="btnCikis">
     <property name="geometry">
      <rect>
-      <x>1200</x>
+      <x>1230</x>
       <y>10</y>
       <width>111</width>
       <height>31</height>
@@ -1208,13 +1249,52 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <string>Çıkış</string>
     </property>
    </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>880</y>
+      <width>435</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_13">
+     <item>
+      <widget class="QPushButton" name="btnSatilanUrunler">
+       <property name="text">
+        <string>Satılan Ürünlerin Hepsini Listele</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_12">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnUrunlerinHepsi">
+       <property name="text">
+        <string>Envanterde Olan Bütün Ürünleri Listele</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1342</width>
+     <width>1341</width>
      <height>25</height>
     </rect>
    </property>
@@ -1229,7 +1309,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
   <widget class="QStatusBar" name="statusbar"/>
   <action name="hakkimda">
    <property name="text">
-    <string>Hakkımızda</string>
+    <string>Hakkımda</string>
    </property>
   </action>
  </widget>
