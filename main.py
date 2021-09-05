@@ -47,7 +47,8 @@ sorguOlustur = ("""CREATE TABLE IF NOT EXISTS envanter(Id INTEGER NOT NULL PRIMA
  GramKarat TEXT NOT NULL,                       \
  UrunId TEXT NOT NULL,                          \
  AliciIletisim TEXT NOT NULL,                   \
- StokSayisi TEXT NOT NULL,                      \
+ StokSayisi TEXT NOT NULL,
+ GirisTarihi TEXT NOT NULL,                      \
  SatisTarihi TEXT NOT NULL,                     \
  StokDurumu TEXT NOT NULL,                      \
  Fotograf BLOB NOT NULL,                        \
@@ -74,19 +75,69 @@ def Ekle():
     _lneAliciIletisim = ui.lneAliciIletisim.text()
     _spbStokSayisi = ui.spbStokSayisi.text()
     _cwdSatisTarihi = ui.cwidSatisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
+    _cwdGirisTarihi = ui.cwidGirisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
     _lneGramKarat = ui.lneKarat.text()
     _lneResimYolu = ui.lneResimYolu.text()
     _lneResimYoluforShow = ui.lneResimYolu.text()
 
     image = BinaryCeviri(_lneResimYolu)
+
+    #if(ui.cmbStokdurumu.currentText()=='Satıldı'):
+        #ui.lneAliciAdi.setEnabled()
+        #ui.lneAliciIletisim.setEnabled()
+        #_lneAliciAdi = ui.lneAliciAdi.text()
+        #_lneAliciIletisim = ui.lneAliciIletisim.text()
+
+
     
     curs.execute("""INSERT INTO envanter
-    (TasMaliyet, AltinMaliyet, ToplamMaliyet, SatisFiyati, AliciIsmi, GramKarat, UrunId, AliciIletisim, StokSayisi, SatisTarihi, StokDurumu, Fotograf, ResimYolu) 
-    VALUES (?, ?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?, ?);""",
-            (_lneTasMaliyet, _lneAltinMaliyet,_lneToplamMaliyet, _lneSatisFiyati, _lneAliciAdi, _lneGramKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu, image, _lneResimYoluforShow))
+    (TasMaliyet, AltinMaliyet, ToplamMaliyet, SatisFiyati, AliciIsmi, GramKarat, UrunId, AliciIletisim, StokSayisi, GirisTarihi, SatisTarihi, StokDurumu, Fotograf, ResimYolu) 
+    VALUES (?, ?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
+            (_lneTasMaliyet, _lneAltinMaliyet,_lneToplamMaliyet, _lneSatisFiyati, _lneAliciAdi, _lneGramKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi,_cwdGirisTarihi, _cwdSatisTarihi, _cmbStokdurumu, image, _lneResimYoluforShow))
     conn.commit()
     Listele()
     ui.statusbar.showMessage("Kayıt ekleme işlemi başarıyla gerçekleşti", 10000)
+
+#---------------Urun Kontrol---------------#
+#------------------------------------------#   
+
+def UrunKontrol():
+# Bu fonksiyon eklenen ürünün satılan bir ürün mü yoksa bekleyen bir ürün mü olduguna karar verir ve ona göre işlem yapar
+
+
+    if(ui.cmbStokdurumu.currentText()=='Satıldı'):
+        ui.lneAliciAdi.setEnabled(True)
+        ui.lneAliciIletisim.setEnabled(True)
+        ui.cwidSatisTarihi.setEnabled(True)
+    
+    elif(ui.cmbStokdurumu.currentText()=='Envanterde Var'):
+
+        ui.lneAliciAdi.setDisabled(True)
+        ui.lneAliciIletisim.setDisabled(True)
+        ui.cwidSatisTarihi.setDisabled(True)
+
+
+#--------------Envanter'e Ekleme Modu---------#
+#---------------------------------------------#
+
+def EnvanterMod():
+
+    ui.lneAliciAdi.setDisabled(True)
+    ui.lneAliciIletisim.setDisabled(True)
+    ui.cwidSatisTarihi.setDisabled(True)
+
+    ui.cmbStokdurumu.setCurrentText("Envanterde Var")
+
+#--------------Satış  Modu--------------------#
+#---------------------------------------------#
+
+def SatisMod():
+
+    ui.lneAliciIletisim.setEnabled(True)
+    ui.lneAliciAdi.setEnabled(True)
+    ui.cwidSatisTarihi.setEnabled(True)
+
+    ui.cmbStokdurumu.setCurrentText("Satıldı")
 
 #---------------Kayıt Güncelle-------------#
 #------------------------------------------#
@@ -111,13 +162,15 @@ def KayitGuncelle():
             _lneAliciIletisim = ui.lneAliciIletisim.text()
             _spbStokSayisi = ui.spbStokSayisi.text()
             _cwdSatisTarihi = ui.cwidSatisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
+            _cwdGirisTarihi = ui.cwidGirisTarihi.selectedDate().toString(QtCore.Qt.ISODate)
 
             _lneResimYolunew = ui.lneResimYolu.text()
 
             #------------ResimGuncelleme-----------#
+            
             imagenew = BinaryCeviri(_lneResimYolunew)
 
-            curs.execute("UPDATE envanter SET TasMaliyet=?, AltinMaliyet=?, ToplamMaliyet=?, SatisFiyati=?, AliciIsmi=?, GramKarat=?, UrunId=?, AliciIletisim=?, StokSayisi=?, SatisTarihi=?, StokDurumu=?,Fotograf=?, ResimYolu=? WHERE Id=?", (_lnetTasMaliyet, _lneAltınMaliyet, _lneToplamMaliyet, _lneSatisFiyati, _lneAliciAdi,  _lneKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdSatisTarihi, _cmbStokdurumu, imagenew, _lneResimYolunew, _Id))
+            curs.execute("UPDATE envanter SET TasMaliyet=?, AltinMaliyet=?, ToplamMaliyet=?, SatisFiyati=?, AliciIsmi=?, GramKarat=?, UrunId=?, AliciIletisim=?, StokSayisi=?, GirisTarihi=?, SatisTarihi=?, StokDurumu=?,Fotograf=?, ResimYolu=? WHERE Id=?", (_lnetTasMaliyet, _lneAltınMaliyet, _lneToplamMaliyet, _lneSatisFiyati, _lneAliciAdi,  _lneKarat, _lneurunId, _lneAliciIletisim, _spbStokSayisi, _cwdGirisTarihi, _cwdSatisTarihi, _cmbStokdurumu, imagenew, _lneResimYolunew, _Id))
 
             conn.commit()
 
@@ -137,7 +190,7 @@ def Listele():
 
     ui.tableWidget.clear()
 
-    ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altın Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+    ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altın Maliyet', 'Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
     ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -146,7 +199,7 @@ def Listele():
     for satirIndeks, satirVeri in enumerate(curs):
         for sutunIndeks, sutunVeri in enumerate (satirVeri):
             it = QTableWidgetItem()
-            if sutunIndeks == 12:
+            if sutunIndeks == 13:
                 pixmap = QPixmap()
                 pixmap.loadFromData(sutunVeri)
                 it.setIcon(QIcon(pixmap))
@@ -160,14 +213,12 @@ def Listele():
     ui.lneTasMaliyet.clear()
     ui.lneAltinMaliyet.clear()
     ui.lneToplamMaliyet.clear()
-    #ui.lneMaliyet.clear()
     ui.lneAliciIletisim.clear()
     ui.lneKarat.clear()
-    #ui.lneIscilik.clear()
     ui.lneAliciAdi.clear()
     ui.lneSatisFiyati.clear()
     ui.lneurunId.clear()
-    curs.execute("SELECT COUNT(*) FROM envanter")
+    curs.execute("SELECT COUNT(*) FROM envanter WHERE StokDurumu=?", ('Envanterde Var',))  # Envanterde Var olan ürünlerin sayısını verir.
     kayitSayisi = curs.fetchone()
     ui.lblUrunsayisi.setText(str(kayitSayisi[0]))
    
@@ -207,15 +258,24 @@ def KayıtAra():
     urunIdSorgu = ui.lneurunId.text()
     envanterDurumSorgu = ui.cmbStokdurumu.currentText()
     aliciIletisimSorgu = ui.lneAliciIletisim.text()
-    curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND AliciIsmi=?) OR (AliciIletisim=? AND StokDurumu=?)", (envanterDurumSorgu, aliciAdSorgu, aliciIletisimSorgu, envanterDurumSorgu))
-    conn.commit()
+
+
+    if(envanterDurumSorgu  == 'Envanterde Var'):
+        curs.execute("SELECT * FROM envanter WHERE (StokDurumu=? AND UrunId=?)",(envanterDurumSorgu, urunIdSorgu))
+        conn.commit()
+    elif(envanterDurumSorgu  == 'Satıldı'):
+
+        curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND AliciIsmi=?) OR (AliciIletisim=? AND StokDurumu=?)", (envanterDurumSorgu, aliciAdSorgu, aliciIletisimSorgu, envanterDurumSorgu))
+        conn.commit()
+    
     ui.tableWidget.clear()
 
     for satirIndeks, satirVeri in enumerate(curs):
         for sutunIndeks, sutunVeri in enumerate (satirVeri):
 
             it = QTableWidgetItem()
-            if sutunIndeks == 12:
+            if sutunIndeks == 13:
+                #13. sütun fotoğraf içerdiği için yani string tabanlı olmadığından bu çevrim işlemini yapmamız gerekiyor.
                 pixmap = QPixmap()
                 pixmap.loadFromData(sutunVeri)
                 it.setIcon(QIcon(pixmap))
@@ -227,7 +287,7 @@ def KayıtAra():
 
 
            
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi' 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
 
 
@@ -245,7 +305,8 @@ def BinaryCeviri(filename):
 #-------------------------------------------------#
 
 def ResimYoluBul():
-    
+    #Resimlerin büyük halini kullanıcıya gösterebilmek için gerekli fonksiyon
+
     fname = QFileDialog.getOpenFileName(caption='Open File',directory= 'C:/Users/MONSTERHAN/Desktop', filter="Images (*.png *.jpg *gif)")
     ui.lneResimYolu.setText(fname[0])
     
@@ -255,6 +316,7 @@ def ResimYoluBul():
 
 
 def ResimEkle():
+    # SQlite3 veritabanına resimler binary tabanlı geçebildiği için bu özel fonksiyonda resimleri binary tabanlı yapmak zorundayız.
 
     conn = sqlite3.connect('veritabani.db')
     curs = conn.cursor()
@@ -283,7 +345,7 @@ def ResmiGoster():
 
     secili = ui.tableWidget.selectedItems()
 
-    item = secili[13].text()
+    item = secili[14].text()
 
     img = Image.open(item)
 
@@ -294,6 +356,7 @@ def ResmiGoster():
 #---------------------------------------------------------------#
 
 def Doldur():
+    # UI üzerinde seçili olan verinin bilgileriyle kutucukları doldurur.
 
     secili = ui.tableWidget.selectedItems()
 
@@ -311,13 +374,20 @@ def Doldur():
         ui.lneAliciIletisim.setText(secili[8].text())
         ui.spbStokSayisi.setValue(int(secili[9].text()))
 
-        yil = int(secili[10].text()[0:4])
-        ay = int(secili[10].text()[5:7])
-        gun=int(secili[10].text()[8:10])
+        yilGiris = int(secili[10].text()[0:4])
+        ayGiris = int(secili[10].text()[5:7])
+        gunGiris = int(secili[10].text()[8:10])
 
-        resimYolu = ui.lneResimYolu.setText(secili[13].text())
+        yilSatis = int(secili[11].text()[0:4])
+        aySatis = int(secili[11].text()[5:7])
+        gunSatis =int(secili[11].text()[8:10])
+
+        ui.cmbStokdurumu.setCurrentText(secili[12].text())
+
+        ui.lneResimYolu.setText(secili[14].text())
     
-        ui.cwidSatisTarihi.setSelectedDate(QtCore.QDate(yil, ay, gun))
+        ui.cwidSatisTarihi.setSelectedDate(QtCore.QDate(yilSatis, aySatis, gunSatis))
+        ui.cwidGirisTarihi.setSelectedDate(QtCore.QDate(yilGiris, ayGiris, gunGiris))
     
     except IndexError:
         pass
@@ -345,33 +415,6 @@ def Temizle():
 
 def ButunUrunler():
 
-    curs.execute("SELECT * FROM envanter WHERE StokDurumu=?", ("Satıldı",))
-
-    conn.commit()
-    ui.tableWidget.clear()
-
-    for satirIndeks, satirVeri in enumerate(curs):
-        for sutunIndeks, sutunVeri in enumerate (satirVeri):
-
-            it = QTableWidgetItem()
-            if sutunIndeks == 12:
-                pixmap = QPixmap()
-                pixmap.loadFromData(sutunVeri)
-                it.setIcon(QIcon(pixmap))
-                
-                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
-            else:
-
-                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
-
-
-           
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
-
-#-------------------Satilan Urunleri Listele------------------#
-#-------------------------------------------------------------#
-
-def SatilanUrunler():
     curs.execute("SELECT * FROM envanter WHERE StokDurumu=?", ("Envanterde Var",))
 
     conn.commit()
@@ -381,7 +424,7 @@ def SatilanUrunler():
         for sutunIndeks, sutunVeri in enumerate (satirVeri):
 
             it = QTableWidgetItem()
-            if sutunIndeks == 12:
+            if sutunIndeks == 13:
                 pixmap = QPixmap()
                 pixmap.loadFromData(sutunVeri)
                 it.setIcon(QIcon(pixmap))
@@ -393,7 +436,34 @@ def SatilanUrunler():
 
 
            
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+
+#-------------------Satilan Urunleri Listele------------------#
+#-------------------------------------------------------------#
+
+def SatilanUrunler():
+    curs.execute("SELECT * FROM envanter WHERE StokDurumu=?", ("Satıldı",))
+
+    conn.commit()
+    ui.tableWidget.clear()
+
+    for satirIndeks, satirVeri in enumerate(curs):
+        for sutunIndeks, sutunVeri in enumerate (satirVeri):
+
+            it = QTableWidgetItem()
+            if sutunIndeks == 13:
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
+
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+
+
+           
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
 #-------------------Çıkış------------------#
 #------------------------------------------#
@@ -428,6 +498,12 @@ ui.btnGuncelle.clicked.connect(KayitGuncelle)
 ui.btnResmiGoster.clicked.connect(ResmiGoster)
 ui.btnResimYolu.clicked.connect(ResimYoluBul)
 ui.btnTemizle.clicked.connect(Temizle)
-ui.btnSatilanUrunler.clicked.connect(ButunUrunler)
-ui.btnUrunlerinHepsi.clicked.connect(SatilanUrunler)
+ui.btnSatilanUrunler.clicked.connect(SatilanUrunler)
+ui.btnUrunlerinHepsi.clicked.connect(ButunUrunler)
+ui.btnEnvanterMod.clicked.connect(EnvanterMod)
+ui.btnSatisMod.clicked.connect(SatisMod)
+
+ui.cmbStokdurumu.currentTextChanged.connect(UrunKontrol)
+
+
 sys.exit(Uygulama.exec_())

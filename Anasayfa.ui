@@ -525,11 +525,61 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
-      <widget class="QPushButton" name="btnTemizle">
-       <property name="text">
-        <string>Temizle</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QPushButton" name="btnEnvanterMod">
+         <property name="text">
+          <string>Envanter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSatisMod">
+         <property name="text">
+          <string>Satış</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Maximum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Maximum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnTemizle">
+         <property name="text">
+          <string>Temizle</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -765,7 +815,11 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="lneAliciAdi"/>
+          <widget class="QLineEdit" name="lneAliciAdi">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -850,7 +904,11 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="lneAliciIletisim"/>
+          <widget class="QLineEdit" name="lneAliciIletisim">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -884,11 +942,27 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
       </layout>
      </item>
      <item>
+      <spacer name="horizontalSpacer_14">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Satış Tarihi :</string>
+          <string>Envantere Giriş Tarihi : </string>
          </property>
         </widget>
        </item>
@@ -896,7 +970,21 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
         <layout class="QVBoxLayout" name="verticalLayout_3"/>
        </item>
        <item>
-        <widget class="QCalendarWidget" name="cwidSatisTarihi"/>
+        <widget class="QCalendarWidget" name="cwidGirisTarihi"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Satış Tarihi : </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCalendarWidget" name="cwidSatisTarihi">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -942,7 +1030,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <number>100</number>
     </property>
     <property name="columnCount">
-     <number>14</number>
+     <number>15</number>
     </property>
     <row/>
     <row/>
@@ -1044,6 +1132,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
     <row/>
     <row/>
     <row/>
+    <column/>
     <column/>
     <column/>
     <column/>
@@ -1091,38 +1180,12 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <number>-2</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>890</y>
-      <width>161</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Envanterdeki Ürün Sayısı : </string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lblUrunsayisi">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>900</y>
-      <width>55</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>1070</x>
-      <y>80</y>
-      <width>221</width>
+      <x>1050</x>
+      <y>70</y>
+      <width>263</width>
       <height>351</height>
      </rect>
     </property>
@@ -1210,7 +1273,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <item>
       <widget class="QPushButton" name="btnListele">
        <property name="text">
-        <string>Tüm Envanteri Listele</string>
+        <string>Envanterde Olan ve Satılan Bütün Ürünler</string>
        </property>
       </widget>
      </item>
@@ -1254,7 +1317,7 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <rect>
       <x>790</x>
       <y>880</y>
-      <width>435</width>
+      <width>459</width>
       <height>80</height>
      </rect>
     </property>
@@ -1282,7 +1345,46 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      <item>
       <widget class="QPushButton" name="btnUrunlerinHepsi">
        <property name="text">
-        <string>Envanterde Olan Bütün Ürünleri Listele</string>
+        <string>Envanterde Var Olan Bütün Ürünleri Listele</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>870</y>
+      <width>176</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_15">
+     <item>
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Envanterdeki Ürün Sayısı : </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_15">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblUrunsayisi">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
