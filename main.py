@@ -9,6 +9,13 @@ from hakkimda import *
 from PyQt5.QtGui import QPixmap, QIcon
 import sqlite3
 import time
+import os
+from datetime import date
+from PIL import Image
+import PIL
+import glob
+import shutil
+
 global curs
 global conn
 
@@ -80,7 +87,9 @@ def Ekle():
     _lneResimYolu = ui.lneResimYolu.text()
     _lneResimYoluforShow = ui.lneResimYolu.text()
 
-    image = BinaryCeviri(_lneResimYolu)
+    #image = BinaryCeviri(_lneResimYolu)
+
+    image = BinaryCeviri(ResimKucultme(_lneResimYolu))
 
     #if(ui.cmbStokdurumu.currentText()=='Satıldı'):
         #ui.lneAliciAdi.setEnabled()
@@ -88,7 +97,7 @@ def Ekle():
         #_lneAliciAdi = ui.lneAliciAdi.text()
         #_lneAliciIletisim = ui.lneAliciIletisim.text()
 
-
+   
     
     curs.execute("""INSERT INTO envanter
     (TasMaliyet, AltinMaliyet, ToplamMaliyet, SatisFiyati, AliciIsmi, GramKarat, UrunId, AliciIletisim, StokSayisi, GirisTarihi, SatisTarihi, StokDurumu, Fotograf, ResimYolu) 
@@ -108,7 +117,7 @@ def UrunKontrol():
     if(ui.cmbStokdurumu.currentText()=='Satıldı'):
         ui.lneAliciAdi.setEnabled(True)
         ui.lneAliciIletisim.setEnabled(True)
-        ui.cwidSatisTarihi.setEnabled(True)
+        ui.cwidSatisTarihi.setEnabled(True) 
     
     elif(ui.cmbStokdurumu.currentText()=='Envanterde Var'):
 
@@ -183,6 +192,42 @@ def KayitGuncelle():
         ui.statusbar.showMessage("Güncelleme iptal edildi", 10000)
 
 
+#-------------------Kayıt Yedekle--------------------#
+#----------------------------------------------------#
+
+def KayitYedekle():
+
+    # O Güne ait bir dosya oluşturulur ve o günün veritabanı yedeklenir.
+
+    # Klasörün ismi o günün tarihi olur
+
+    try:
+
+        today = date.today()
+
+        directory = str(today)
+
+        onedrive = os.path.join(os.path.join(os.environ['USERPROFILE']), 'OneDrive')
+
+        path = os.path.join(onedrive, directory)
+
+        os.mkdir(path)
+
+        # Yedeklenmesi istenilen dosya yedeklenir
+
+        original = os.getcwd() + "\\veritabani.db"
+
+        target = os.path.abspath("OneDrive")
+
+        shutil.copy(original, target)
+    except FileExistsError:
+
+        original = os.getcwd() + "\\veritabani.db"
+
+        shutil.copy(original, path)
+
+
+
 #-------------------Listele----------------#
 #------------------------------------------#
 
@@ -239,6 +284,8 @@ def KayıtSil():
         try:
             curs.execute("DELETE FROM envanter WHERE UrunId='%s'" %(silinecek))
             conn.commit()
+            conn.execute("VACUUM")
+            conn.commit()
             Listele()
             ui.statusbar.showMessage("Kayıt silme başarıyla gerçekleşti", 10000)
         except Exception as Hata:
@@ -247,6 +294,14 @@ def KayıtSil():
         ui.statusbar.showMessage("Silme işlemi iptal edildi....", 10000)
 
 
+
+#-------------------Temizlik------------------#
+#---------------------------------------------#
+
+def Temizlik():
+
+    conn.execute("VACUUM")
+
 #-------------------KayıtAra------------------#
 #---------------------------------------------#
 
@@ -254,8 +309,8 @@ def KayıtSil():
 def KayıtAra():
 
 
-    aliciAdSorgu = ui.lneAliciAdi.text()
     urunIdSorgu = ui.lneurunId.text()
+    aliciAdSorgu = ui.lneAliciAdi.text()
     envanterDurumSorgu = ui.cmbStokdurumu.currentText()
     aliciIletisimSorgu = ui.lneAliciIletisim.text()
 
@@ -287,7 +342,7 @@ def KayıtAra():
 
 
            
-            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi' 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
 
 
@@ -304,10 +359,28 @@ def BinaryCeviri(filename):
 #-------------------ResimYoluBul------------------#
 #-------------------------------------------------#
 
+def ResimKucultme(filename):
+    
+    foo = Image.open(filename)
+
+    width = 720
+
+    oran = foo.size[0]/width
+
+    height = foo.size[1]/oran
+
+    foo = foo.resize((width, int(height)) ,Image.ANTIALIAS)
+
+    foo.save("Fotograflar\\CompressedImages\\YZK_scaled.jpeg",optimize=True, quality=35)
+
+    return "Fotograflar\\CompressedImages\\YZK_scaled.jpeg"
+
+
+
 def ResimYoluBul():
     #Resimlerin büyük halini kullanıcıya gösterebilmek için gerekli fonksiyon
 
-    fname = QFileDialog.getOpenFileName(caption='Open File',directory= 'C:/Users/MONSTERHAN/Desktop', filter="Images (*.png *.jpg *gif)")
+    fname = QFileDialog.getOpenFileName(caption='Open File',directory= 'C:/Users', filter="Images (*.png *.jpg *gif *.jpeg)")
     ui.lneResimYolu.setText(fname[0])
     
 
@@ -327,8 +400,10 @@ def ResimEkle():
     
     #secili = ui.tableWidget.selectedItems() # Secili item
     resimyolu = ui.lneResimYolu.text()
+
+    ResimKucultme(resimyolu)
     
-    photo = BinaryCeviri(resimyolu)
+    photo = BinaryCeviri(ResimKucultme(resimyolu))
 
     curs.execute(sorgu, (photo,))
 
@@ -338,14 +413,12 @@ def ResimEkle():
 #------------------------------------------------#
 
 def ResmiGoster():
-    
-    from PIL import Image
 
     resimYolu = ui.lneResimYolu.text() 
 
     secili = ui.tableWidget.selectedItems()
 
-    item = secili[14].text()
+    item = ResimKucultme(secili[14].text())
 
     img = Image.open(item)
 
@@ -357,7 +430,6 @@ def ResmiGoster():
 
 def Doldur():
     # UI üzerinde seçili olan verinin bilgileriyle kutucukları doldurur.
-
     secili = ui.tableWidget.selectedItems()
 
     try:
@@ -433,8 +505,6 @@ def ButunUrunler():
             else:
 
                 ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
-
-
            
             ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
@@ -502,6 +572,8 @@ ui.btnSatilanUrunler.clicked.connect(SatilanUrunler)
 ui.btnUrunlerinHepsi.clicked.connect(ButunUrunler)
 ui.btnEnvanterMod.clicked.connect(EnvanterMod)
 ui.btnSatisMod.clicked.connect(SatisMod)
+ui.btnTemizlik.clicked.connect(Temizlik)
+ui.btnKayitYedekleme.clicked.connect(KayitYedekle)
 
 ui.cmbStokdurumu.currentTextChanged.connect(UrunKontrol)
 

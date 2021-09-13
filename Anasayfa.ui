@@ -1390,6 +1390,32 @@ QTimeEdit, QToolBox, QToolBox::tab, QToolBox::tab:selected {
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>880</y>
+      <width>289</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_14">
+     <item>
+      <widget class="QPushButton" name="btnTemizlik">
+       <property name="text">
+        <string>Veritabanı Temizleme</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnKayitYedekleme">
+       <property name="text">
+        <string>Kayıt Yedekleme</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
