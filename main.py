@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from AnasayfaUI import *
 from hakkimda import *
+from KayitlariGor import *
 from PyQt5.QtGui import QPixmap, QIcon
 import sqlite3
 import time
@@ -35,6 +36,15 @@ anaPencere.show()
 hakkindaPencere  = QDialog()
 uiHakkimda = Ui_Dialog()
 uiHakkimda.setupUi(hakkindaPencere)
+
+
+#-----------Kayitları Gor----------------#
+#----------------------------------------#
+
+kayitlarPencere = QDialog()
+kayitlar = Ui_Form()
+kayitlar.setupUi(kayitlarPencere)
+
 
 
 #------------Veritabanı İşlemleri----------#
@@ -318,9 +328,10 @@ def KayıtAra():
     if(envanterDurumSorgu  == 'Envanterde Var'):
         curs.execute("SELECT * FROM envanter WHERE (StokDurumu=? AND UrunId=?)",(envanterDurumSorgu, urunIdSorgu))
         conn.commit()
+
     elif(envanterDurumSorgu  == 'Satıldı'):
 
-        curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND AliciIsmi=?) OR (AliciIletisim=? AND StokDurumu=?)", (envanterDurumSorgu, aliciAdSorgu, aliciIletisimSorgu, envanterDurumSorgu))
+        curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND UrunId=?) OR (AliciIletisim=? AND StokDurumu=?) OR (AliciIsmi=? AND StokDurumu=?)", (envanterDurumSorgu, urunIdSorgu, aliciIletisimSorgu, envanterDurumSorgu, aliciAdSorgu, envanterDurumSorgu))
         conn.commit()
     
     ui.tableWidget.clear()
@@ -344,6 +355,78 @@ def KayıtAra():
            
             ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
+
+#------------------Bugun Satilan Urunler-----------------#
+#--------------------------------------------------------#
+
+def BugunSatilanUrunler():
+
+
+    curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND SatisTarihi=?)", ("Satıldı", str(date.today())))
+    conn.commit()
+
+    ui.tableWidget.clear()
+
+    for satirIndeks, satirVeri in enumerate(curs):
+        for sutunIndeks, sutunVeri in enumerate (satirVeri):
+
+            it = QTableWidgetItem()
+            if sutunIndeks == 13:
+                #13. sütun fotoğraf içerdiği için yani string tabanlı olmadığından bu çevrim işlemini yapmamız gerekiyor.
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
+
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+
+             # Table widget konumunu en başa alır.
+
+            index = ui.tableWidget.model().index(0 , 0)
+            
+            ui.tableWidget.scrollTo(index)
+
+            #-----------------------------------
+
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+
+
+def BugunEnvantereGirilenUrunler():
+
+    curs.execute("SELECT * FROM envanter WHERE(StokDurumu=? AND SatisTarihi=?)", ("Envanterde Var", str(date.today())))
+    conn.commit()
+
+    ui.tableWidget.clear()
+
+    for satirIndeks, satirVeri in enumerate(curs):
+        for sutunIndeks, sutunVeri in enumerate (satirVeri):
+
+            it = QTableWidgetItem()
+            if sutunIndeks == 13:
+                #13. sütun fotoğraf içerdiği için yani string tabanlı olmadığından bu çevrim işlemini yapmamız gerekiyor.
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
+
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+
+            # Table widget konumunu en başa alır.
+
+            index = ui.tableWidget.model().index(0 , 0)
+            
+            ui.tableWidget.scrollTo(index)
+
+            #-----------------------------------
+           
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+
+
+    pass
 
 
 
@@ -371,7 +454,7 @@ def ResimKucultme(filename):
 
     foo = foo.resize((width, int(height)) ,Image.ANTIALIAS)
 
-    foo.save("Fotograflar\\CompressedImages\\YZK_scaled.jpeg",optimize=True, quality=35)
+    foo.save("Fotograflar\\CompressedImages\\YZK_scaled.jpeg",optimize=True, quality=42)
 
     return "Fotograflar\\CompressedImages\\YZK_scaled.jpeg"
 
@@ -414,15 +497,27 @@ def ResimEkle():
 
 def ResmiGoster():
 
-    resimYolu = ui.lneResimYolu.text() 
+    try:
 
-    secili = ui.tableWidget.selectedItems()
+        resimYolu = ui.lneResimYolu.text() 
 
-    item = ResimKucultme(secili[14].text())
+        secili = ui.tableWidget.selectedItems()
 
-    img = Image.open(item)
+        item = ResimKucultme(secili[14].text())
 
-    img.show()
+        img = Image.open(item)
+
+        img.show()
+
+    except FileNotFoundError:
+
+        msg = QMessageBox()
+
+        msg.setWindowTitle("UYARI")
+
+        msg.setText("Resim dosyası bulunamıyor ! ")
+
+        x = msg.exec_()  # this will show our messagebox
 
 
 #-------------------Doldur (Yardımcı Fonksiyon)-----------------#
@@ -535,6 +630,45 @@ def SatilanUrunler():
            
             ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
 
+
+#---------------------Kayitları Gor---------------#
+#-------------------------------------------------#
+
+def KayitlariGorShow():
+
+    kayitlarPencere.show()
+
+def EnvanterKayitlari():
+
+    #Bu fonksiyon sayesinde seçili olan günün kayitlarına ulaşabiliyoruz.
+
+    tarih = kayitlar.cwKayitlar.selectedDate().toString(QtCore.Qt.ISODate)
+
+    curs.execute("SELECT * FROM envanter WHERE (SatisTarihi=?) OR (GirisTarihi=?)", (tarih, tarih))
+    conn.commit()
+
+    ui.tableWidget.clear()
+
+    for satirIndeks, satirVeri in enumerate(curs):
+        for sutunIndeks, sutunVeri in enumerate (satirVeri):
+
+            it = QTableWidgetItem()
+            if sutunIndeks == 13:
+                pixmap = QPixmap()
+                pixmap.loadFromData(sutunVeri)
+                it.setIcon(QIcon(pixmap))
+                
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks, it)
+            else:
+
+                ui.tableWidget.setItem(satirIndeks,sutunIndeks,QTableWidgetItem(str(sutunVeri)))
+           
+            ui.tableWidget.setHorizontalHeaderLabels(('No', 'Tas Maliyet', 'Altin Maliyet','Toplam Maliyet', 'SatisFiyati', 'Alici İsmi', 'Gram Karat', 'UrunId', 'Alıcı Iletisim', 'Stok Sayisi','Giris Tarihi', 'Satis Tarihi', 'Stok Durumu', 'Fotograf', 'ResimYolu'))
+
+            kayitlarPencere.close()
+
+
+
 #-------------------Çıkış------------------#
 #------------------------------------------#
  
@@ -572,8 +706,12 @@ ui.btnSatilanUrunler.clicked.connect(SatilanUrunler)
 ui.btnUrunlerinHepsi.clicked.connect(ButunUrunler)
 ui.btnEnvanterMod.clicked.connect(EnvanterMod)
 ui.btnSatisMod.clicked.connect(SatisMod)
-ui.btnTemizlik.clicked.connect(Temizlik)
+
 ui.btnKayitYedekleme.clicked.connect(KayitYedekle)
+ui.btnBugunSatilan.clicked.connect(BugunSatilanUrunler)
+ui.btnBugunEnvanter.clicked.connect(BugunEnvantereGirilenUrunler)
+ui.btnEnvanterKayitlari.clicked.connect(KayitlariGorShow)
+kayitlar.btnKayitlarGOR.clicked.connect(EnvanterKayitlari)
 
 ui.cmbStokdurumu.currentTextChanged.connect(UrunKontrol)
 
